@@ -5,7 +5,7 @@ const EXCHANGE_RATE_FOR_PESOS = 0.1;
 
 /**
  * Helper function used to possibly apply a currency conversion
- * on the supplided amount if it is not Canadian currency.
+ * on the supplied amount if it is not Canadian currency.
  */
 module.exports = (amount, sourceType) => {
 
