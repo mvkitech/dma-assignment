@@ -1,32 +1,32 @@
 const currencyExchange = require('../../src/util/currencyExchange');
 const { CAD, USD, PESO } = require('../../src/models/currencyType');
 
-test('CurrencyExchange_whenCalledWithUSDType_ReturnsConvertedAmount', () => {
+test('currencyExchange_whenCalledWithUSDType_returnsConvertedAmount', () => {
   const convertedAmount = currencyExchange(100, USD);
   expect(convertedAmount).toBe(200);
 });
 
-test('CurrencyExchange_whenCalledWithPESOType_ReturnsConvertedAmount', () => {
+test('currencyExchange_whenCalledWithPESOType_returnsConvertedAmount', () => {
   const convertedAmount = currencyExchange(100, PESO);
   expect(convertedAmount).toBe(10);
 });
 
-test('CurrencyExchange_whenCalledWithCADType_ReturnsUnconvertedAmount', () => {
+test('currencyExchange_whenCalledWithCADType_returnsUnconvertedAmount', () => {
   const convertedAmount = currencyExchange(100, CAD);
   expect(convertedAmount).toBe(100);
 });
 
-test('CurrencyExchange_whenCalledWithUnknownType_ReturnsUnconvertedAmount', () => {
+test('currencyExchange_whenCalledWithUnknownType_returnsUnconvertedAmount', () => {
   const convertedAmount = currencyExchange(100, -1);
   expect(convertedAmount).toBe(100);
 });
 
-test('CurrencyExchange_whenCalledWithCADType_ToBeRoundedUp', () => {
+test('currencyExchange_whenCalledWithCADType_returnsResultToBeRoundedUp', () => {
   const convertedAmount = currencyExchange(100.867, CAD);
   expect(convertedAmount).toBe(100.87);
 });
 
-test('CurrencyExchange_whenCalledWithCADType_ToBeRoundedDown', () => {
+test('currencyExchange_whenCalledWithCADType_returnsResultToBeRoundedDown', () => {
   const convertedAmount = currencyExchange(100.993, CAD);
   expect(convertedAmount).toBe(100.99);
 });

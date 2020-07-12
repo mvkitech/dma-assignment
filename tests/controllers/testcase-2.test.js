@@ -44,10 +44,6 @@ test('dma_challenge_testcase_2', async () => {
     .get('/api/bank/accounts/2001')
     .send()
     .expect(200);
-  // Commented because am unable to use the response
-  // and have tried "JSON.stringify()"" + "JSON.parse()".
-  // But neither worked. However if you uncomment the 
-  // "console.log()" statement, balance is "9800".
-  //expect(response.body.balance).toEqual(9800);
-  //console.log(response.body);
+  expect(response.body.balance).toBe(9800);
+  
 });

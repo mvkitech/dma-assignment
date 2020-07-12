@@ -3,13 +3,13 @@ const Customer = require('../../src/models/customer');
 const Account = require('../../src/models/account');
 const { CAD, USD, PESO } = require('../../src/models/currencyType');
 
-test('isCustomerValid_whenNoCustomersExist_ReturnUndefined', () => {
+test('isCustomerValid_whenNoCustomersExist_returnsUndefined', () => {
   const customers = [];
   const result = BankService.isCustomerValid(1, customers);
   expect(result).toBeUndefined();
 });
 
-test('isCustomerValid_whenInvalidCustomersUsed_ReturnUndefined', () => {
+test('isCustomerValid_whenInvalidCustomersUsed_returnsUndefined', () => {
   const customers = []; const customerAccounts = [];
   const customer = new Customer(1, 'John Doe', 'John.Doe@acme.com', customerAccounts);
   customers.push(customer);
@@ -17,7 +17,7 @@ test('isCustomerValid_whenInvalidCustomersUsed_ReturnUndefined', () => {
   expect(result).toBeUndefined();
 });
 
-test('isCustomerValid_whenValidCustomersUsed_ReturnCustomer', () => {
+test('isCustomerValid_whenValidCustomersUsed_returnsCustomer', () => {
   const customers = []; const customerAccounts = [];
   const customer = new Customer(1, 'John Doe', 'John.Doe@acme.com', customerAccounts);
   customers.push(customer);
@@ -25,7 +25,7 @@ test('isCustomerValid_whenValidCustomersUsed_ReturnCustomer', () => {
   expect(result.id).toBe(1);
 });
 
-test('isAuthorizedOnAccount_whenNoAccountsExist_ReturnNull', () => {
+test('isAuthorizedOnAccount_whenNoAccountsExist_returnsNull', () => {
   const customerAccounts = [];
   const customer = new Customer(100, 'John Doe', 'John.Doe@acme.com', customerAccounts);
   const accounts = [];
@@ -33,7 +33,7 @@ test('isAuthorizedOnAccount_whenNoAccountsExist_ReturnNull', () => {
   expect(result).toBeNull();
 });
 
-test('isAuthorizedOnAccount_whenInvalidAccountsUsed_ReturnNull', () => {
+test('isAuthorizedOnAccount_whenInvalidAccountsUsed_returnsNull', () => {
   const accounts = [];
   const account = new Account(1, 100.00);
   const customerAccounts = [];
@@ -44,7 +44,7 @@ test('isAuthorizedOnAccount_whenInvalidAccountsUsed_ReturnNull', () => {
   expect(result).toBeNull();
 });
 
-test('isAuthorizedOnAccount_whenValidAccountsUsed_ReturnAccount', () => {
+test('isAuthorizedOnAccount_whenValidAccountsUsed_returnsAccount', () => {
   const accounts = [];
   const account = new Account(1, 100.00);
   const customerAccounts = [];
@@ -55,37 +55,37 @@ test('isAuthorizedOnAccount_whenValidAccountsUsed_ReturnAccount', () => {
   expect(result.id).toBe(1);
 });
 
-test('convertCurrency_whenCalledWithUSDType_ReturnsConvertedAmount', () => {
+test('convertCurrency_whenCalledWithUSDType_returnsConvertedAmount', () => {
   const convertedAmount = BankService.convertCurrency(100, USD);
   expect(convertedAmount).toBe(200);
 });
 
-test('convertCurrency_whenCalledWithPESOType_ReturnsConvertedAmount', () => {
+test('convertCurrency_whenCalledWithPESOType_returnsConvertedAmount', () => {
   const convertedAmount = BankService.convertCurrency(100, PESO);
   expect(convertedAmount).toBe(10);
 });
 
-test('convertCurrency_whenCalledWithCADType_ReturnsUnconvertedAmount', () => {
+test('convertCurrency_whenCalledWithCADType_returnsUnconvertedAmount', () => {
   const convertedAmount = BankService.convertCurrency(100, CAD);
   expect(convertedAmount).toBe(100);
 });
 
-test('convertCurrency_whenCalledWithUnknownType_ReturnsUnconvertedAmount', () => {
+test('convertCurrency_whenCalledWithUnknownType_returnsUnconvertedAmount', () => {
   const convertedAmount = BankService.convertCurrency(100, -1);
   expect(convertedAmount).toBe(100);
 });
 
-test('convertCurrency_whenCalledWithCADType_ToBeRoundedUp', () => {
+test('convertCurrency_whenCalledWithCADType_returnsResultToBeRoundedUp', () => {
   const convertedAmount = BankService.convertCurrency(100.867, CAD);
   expect(convertedAmount).toBe(100.87);
 });
 
-test('convertCurrency_whenCalledWithCADType_ToBeRoundedDown', () => {
+test('convertCurrency_whenCalledWithCADType_returnsResultToBeRoundedDown', () => {
   const convertedAmount = BankService.convertCurrency(100.993, CAD);
   expect(convertedAmount).toBe(100.99);
 });
 
-test('hasSufficientFundsForWithdrawal_whenFundsAreSufficient_ReturnTrue', () => {
+test('hasSufficientFundsForWithdrawal_whenFundsAreSufficient_returnsTrue', () => {
   let account = new Account(1, 100.00);
   let result = BankService.hasSufficientFundsForWithdrawal(account, 99.99);
   expect(result).toEqual(true);
@@ -94,7 +94,7 @@ test('hasSufficientFundsForWithdrawal_whenFundsAreSufficient_ReturnTrue', () => 
   expect(result).toEqual(true);
 });
 
-test('hasSufficientFundsForWithdrawal_whenFundsAreNotSufficient_ReturnFalse', () => {
+test('hasSufficientFundsForWithdrawal_whenFundsAreNotSufficient_returnsFalse', () => {
   const account = new Account(1, 99.98);
   const result = BankService.hasSufficientFundsForWithdrawal(account, 99.99);
   expect(result).toEqual(false);

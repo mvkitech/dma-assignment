@@ -11,7 +11,7 @@ const { DEPOSIT, WITHDRAWAL } = require('../models/transactionType');
 //       that if I was using a database I would have
 //       used 'async/await' or "promises" in the code.
 const customers = [];
-const accounts = [];
+const accounts  = [];
 const transactions = [];
 
 /**
@@ -19,9 +19,7 @@ const transactions = [];
  */
 exports.getAllAccounts = (req, res) => {
   try {
-    res.status(200).json({
-      accounts: accounts
-    });
+    res.status(200).json(accounts);
   } catch (error) {
     res.status(500).json({
       message: `Error retrieving accounts: "${error.error.message}"`,
@@ -36,11 +34,9 @@ exports.getAccount = (req, res) => {
   try {
     const target = accounts.find((account) => account.id === req.params.id);
     if (target) {
-      res.status(200).json({
-        account: target
-      });
+      res.status(200).json(target);
     } else {
-      res.status(404).json({ message: 'Account not found' });
+      res.status(404).json({ message: 'Not Found' });
     }
   } catch (error) {
     res.status(500).json({
@@ -87,7 +83,7 @@ exports.addCustomerAccount = (req, res) => {
 
     } else {
 
-      // Update Customer Account assignments
+      // Update Customer Account associations
       customer.accounts.push(account);
 
     }
@@ -96,11 +92,9 @@ exports.addCustomerAccount = (req, res) => {
     accounts.push(account);
 
     // Return successful response
-    res.status(200).json({
-      customer: customer
-    });
+    res.status(200).json(customer);
+
   } catch (error) {
-    // Return server error response
     res.status(500).json({
       message: `Error creating customer: "${error.message}"`,
     });
@@ -119,7 +113,7 @@ exports.addDeposit = (req, res) => {
     const customer = BankService.isCustomerValid(customerId, customers);
     if(customer) {
 
-      // Determine if Customer authorized to issue Deposit transaction
+      // Determine if Customer is authorized on Account
       const accountId = req.body.accountId;
       const account = BankService.isAuthorizedOnAccount(
         customer, 
@@ -128,7 +122,7 @@ exports.addDeposit = (req, res) => {
       );
       if (account) {
 
-        // Possibly convert Deposit amount to CAD currency
+        // Make sure Deposit amount is in CAD currency
         const originalAmount  = req.body.amount;
         const convertedAmount = BankService.convertCurrency(
           originalAmount, parseInt(req.body.currencyType)
@@ -148,17 +142,13 @@ exports.addDeposit = (req, res) => {
         transactions.push(depositTransaction);
 
         // Return successful response
-        res.status(200).json({
-          transaction: depositTransaction
-        });
+        res.status(200).json(depositTransaction);
 
       } else {
-        // Do not feel an email needs to be sent out here
-        res.status(400).json({ message: 'Not authorized on Account' });
+        res.status(400).json({ message: 'Not Authorized' });
       }
 
     } else {
-        // Cannot send email to Customer since they are not known
         res.status(400).json({ message: 'Invalid Customer' });
     }
 
@@ -181,7 +171,7 @@ exports.addWithdrawal = (req, res) => {
     const customer = BankService.isCustomerValid(customerId, customers);
     if(customer) {
 
-      // Determine if Customer authorized to issue Withdrawal transaction
+      // Determine if Customer is authorized on Account
       const accountId = req.body.accountId;
       const account = BankService.isAuthorizedOnAccount(
         customer, 
@@ -190,13 +180,13 @@ exports.addWithdrawal = (req, res) => {
       );
       if (account) {
 
-        // Possibly convert Withdrawal amount to CAD currency
+        // Make sure Withdrawal amount is in CAD currency
         const originalAmount  = req.body.amount;
         const convertedAmount = BankService.convertCurrency(
           originalAmount, parseInt(req.body.currencyType)
         );
 
-        // Are sufficient withdrawal funds available
+        // Make sure sufficient withdrawal funds are available
         const hasFunds = BankService.hasSufficientFundsForWithdrawal(
           account, convertedAmount  
         );
@@ -216,24 +206,20 @@ exports.addWithdrawal = (req, res) => {
           transactions.push(withdrawalTransaction);
 
           // Return successful response
-          res.status(200).json({
-            transaction: withdrawalTransaction
-          });
+          res.status(200).json(withdrawalTransaction);
 
         } else {
-          // Do not feel an email needs to be sent out here 
-          res.status(400).json({ message: 'Insufficient funds on Account' });
+          res.status(400).json({ message: 'Insufficient Funds' });
         }
 
       } else {
         // Send Customer an email concerning Unauthorized Withdrawal Request
         const message = `Unauthorized Withdrawal Request on Account: "${accountId}"`;
         EmailService(customer.email, message);
-        res.status(400).json({ message: 'Not authorized on Account' });
+        res.status(400).json({ message: 'Not Authorized' });
       }
 
     } else {
-      // Cannot send email to Customer since they are not known
       res.status(400).json({ message: 'Invalid Customer' });
     }
 
@@ -256,7 +242,7 @@ exports.addTransfer = (req, res) => {
     const customer = BankService.isCustomerValid(customerId, customers);
     if(customer) {
 
-      // Determine if Customer authorized to Withdrawal from Account
+      // Determine if Customer is authorized on Account
       const fromAccountId = req.body.fromAccountId;
       const fromAccount = BankService.isAuthorizedOnAccount(
         customer, 
@@ -265,63 +251,71 @@ exports.addTransfer = (req, res) => {
       );
       if (fromAccount) {
 
-        // Extract account which will receive the transfer
-        const toAccountId = req.body.toAccountId;
-        const toAccount = accounts.find((account) => account.id === toAccountId);
-        if (toAccount) {
+        // Make sure Transfer amount is in CAD currency
+        const originalAmount  = req.body.amount;
+        const convertedAmount = BankService.convertCurrency(
+          originalAmount, parseInt(req.body.currencyType)
+        );
 
-          // Possibly convert Transfer amount to CAD currency
-          const originalAmount  = req.body.amount;
-          const convertedAmount = BankService.convertCurrency(
-            originalAmount, parseInt(req.body.currencyType)
-          );
+        // Make sure sufficient withdrawal funds are available
+        const hasFunds = BankService.hasSufficientFundsForWithdrawal(
+          fromAccount, convertedAmount  
+        );
+        if (hasFunds) {
 
-          // Apply Withdrawal from Account
-          fromAccount.balance -= convertedAmount;
+          // Extract account which will receive the transfer
+          const toAccountId = req.body.toAccountId;
+          const toAccount = accounts.find((account) => account.id === toAccountId);
+          if (toAccount) {
 
-          // Apply Deposit to Account
-          toAccount.balance += convertedAmount;
+            // Apply Withdrawal from Account
+            fromAccount.balance -= convertedAmount;
 
-          // Create new Withdrawal transaction
-          const withdrawalTransaction = new Transaction(
-            customer.id,
-            fromAccount.id,
-            WITHDRAWAL,
-            req.body.currencyType,
-            originalAmount
-          );
-          transactions.push(withdrawalTransaction);
+            // Apply Deposit to Account
+            toAccount.balance += convertedAmount;
 
-          // Create new Deposit transaction
-          const depositTransaction = new Transaction(
-            customer.id,
-            toAccount.id,
-            DEPOSIT,
-            req.body.currencyType,
-            originalAmount
-          );
-          transactions.push(depositTransaction);
+            // Create new Withdrawal transaction
+            const withdrawalTransaction = new Transaction(
+              customer.id,
+              fromAccount.id,
+              WITHDRAWAL,
+              req.body.currencyType,
+              originalAmount
+            );
+            transactions.push(withdrawalTransaction);
 
-          // Return successful response
-          res.status(200).json({
-            withdrawalTransaction: withdrawalTransaction,
-            depositTransaction: depositTransaction
-          });
+            // Create new Deposit transaction
+            const depositTransaction = new Transaction(
+              customer.id,
+              toAccount.id,
+              DEPOSIT,
+              req.body.currencyType,
+              originalAmount
+            );
+            transactions.push(depositTransaction);
+
+            // Return successful response
+            res.status(200).json({
+              withdrawalTransaction: withdrawalTransaction,
+              depositTransaction: depositTransaction
+            });
+
+          } else {
+            res.status(400).json({ message: 'Invalid Receiving Account' });
+          }
 
         } else {
-          // Do not feel an email needs to be sent out here 
-          res.status(400).json({ message: 'Invalid Receiving Account' });
+          res.status(400).json({ message: 'Insufficient Funds' });
         }
 
       } else {
         // Send Customer an email concerning Unauthorized Withdrawal Request
         const message = `Unauthorized Withdrawal Request on Account: "${fromAccountId}"`;
         EmailService(customer.email, message);
-        res.status(400).json({ message: 'Not authorized on Account' });
+        res.status(400).json({ message: 'Not Authorized' });
       }
 
     } else {
-      // Cannot send email to Customer since they are not known
       res.status(400).json({ message: 'Invalid Customer' });
     }
 
