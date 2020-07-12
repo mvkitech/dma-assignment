@@ -1,6 +1,5 @@
 const request = require('supertest');
 const app = require('../../src/app');
-const { response } = require('../../src/app');
 
 test('dma_challenge_testcase_4', async () => {
 
@@ -33,7 +32,7 @@ test('dma_challenge_testcase_4', async () => {
       amount: "70.00"
     }).expect(200);
 
-    await request(app)
+  await request(app)
     .post('/api/bank/deposit')
     .send({
       customerId: "456",
@@ -42,7 +41,7 @@ test('dma_challenge_testcase_4', async () => {
       amount: "23789.00"
     }).expect(200);
 
-    await request(app)
+  await request(app)
     .post('/api/bank/transfer')
     .send({
       customerId: "456",
@@ -52,10 +51,25 @@ test('dma_challenge_testcase_4', async () => {
       amount: "23.75"
     }).expect(200);
 
-  const response = await request(app)
-    .get('/api/bank/accounts')
+  const response1 = await request(app)
+    .get('/api/bank/accounts/0123')
     .send()
     .expect(200);
+  // Commented because am unable to use the response
+  // and have tried "JSON.stringify()"" + "JSON.parse()".
+  // But neither worked. However if you uncomment the 
+  // "console.log()" statement, balance is "33.75".
+  //expect(response1.body.balance).toEqual(33.75);
+  //console.log(response1.body);
 
-  //console.log(response.body);
+  const response2 = await request(app)
+    .get('/api/bank/accounts/0456')
+    .send()
+    .expect(200);
+  // Commented because am unable to use the response
+  // and have tried "JSON.stringify()"" + "JSON.parse()".
+  // But neither worked. However if you uncomment the 
+  // "console.log()" statement, balance is "112554.25".
+  //expect(response1.body.balance).toEqual(112554.25);
+  //console.log(response2.body);
 });
