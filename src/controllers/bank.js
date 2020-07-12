@@ -22,7 +22,7 @@ exports.getAllAccounts = (req, res) => {
     res.status(200).json(accounts);
   } catch (error) {
     res.status(500).json({
-      message: `Error retrieving accounts: "${error.error.message}"`,
+      message: `Error retrieving accounts: "${error.message}"`,
     });
   }
 };
