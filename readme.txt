@@ -1,8 +1,8 @@
 The code in this project was built with Node JS using VS-Code. The code is
 NOT connected to a database, and instead stores all of the data during a 
 given HttpSession in memory. As long as you have Node JS installed (it was 
-built using version 12.5.0) all you need to down is install it into a folder 
-of your own choosing and then type in a terminal window: 
+built using version 12.5.0) all you need to do is install the project into 
+a folder of your own choosing and then type in a terminal window: 
 
 		npm install
 
