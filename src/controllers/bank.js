@@ -20,8 +20,7 @@ const transactions = [];
 exports.getAllAccounts = (req, res) => {
   try {
     res.status(200).json({
-      message: 'Accounts sent',
-      accounts: accounts,
+      accounts: accounts
     });
   } catch (error) {
     res.status(500).json({
@@ -38,8 +37,7 @@ exports.getAccount = (req, res) => {
     const target = accounts.find((account) => account.id === req.params.id);
     if (target) {
       res.status(200).json({
-        message: 'Account sent',
-        account: target,
+        account: target
       });
     } else {
       res.status(404).json({ message: 'Account not found' });
@@ -99,7 +97,6 @@ exports.addCustomerAccount = (req, res) => {
 
     // Return successful response
     res.status(200).json({
-      message: 'Customer Account added',
       customer: customer
     });
   } catch (error) {
@@ -152,7 +149,6 @@ exports.addDeposit = (req, res) => {
 
         // Return successful response
         res.status(200).json({
-          message: 'Deposit was successful',
           transaction: depositTransaction
         });
 
@@ -221,7 +217,6 @@ exports.addWithdrawal = (req, res) => {
 
           // Return successful response
           res.status(200).json({
-            message: 'Withdrawal was successful',
             transaction: withdrawalTransaction
           });
 
@@ -309,7 +304,6 @@ exports.addTransfer = (req, res) => {
 
           // Return successful response
           res.status(200).json({
-            message: 'Transfer was successful',
             withdrawalTransaction: withdrawalTransaction,
             depositTransaction: depositTransaction
           });

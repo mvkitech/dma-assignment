@@ -4,5 +4,5 @@
  * some nefarious activity on one of their Accounts. 
  */
 module.exports = (email, message) => {
-  console.log(`email: "${email}" message: "${message}"`);
+  //console.log(`email: "${email}" message: "${message}"`);
 };
